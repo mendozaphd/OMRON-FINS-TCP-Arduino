@@ -5,7 +5,11 @@
 #include <Arduino.h>
 // #include <SPI.h>
 // #include <EthernetENC.h>
+#ifdef ESP32
 #include <WiFi.h>
+#else
+#include <ESP8266WiFi.h>
+#endif
 #include "FINS_constants.h"
 //#include <vector>
 //#include <Vector.h>
@@ -117,6 +121,15 @@ public:
     float_value = float value of 64 bits
     */
     FinsErrors MemoryAreaWrite(MemoryArea area, uint16_t start_address, double double_value);
+
+        /* Write to Any Memory Area from signed double value and returns the error code of the operation
+    >>>>>>> (this operation uses 4 consecutive words to store the double value) <<<<<<
+    Memory Area = memory area to read (DM,H,CIO..)
+    Address= Memory area to start writing words
+    No_words = number of words to write
+    float_value = float value of 64 bits
+    */
+    FinsErrors MemoryAreaWrite(MemoryArea area, uint16_t start_address, String text_message);
 
     /* Prints the time in the PLC  */
     FinsErrors ClockRead();

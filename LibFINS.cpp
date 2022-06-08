@@ -285,6 +285,24 @@ FinsErrors FINS_TCP::MemoryAreaWrite(MemoryArea area, uint16_t start_address, ui
     return FrameSend(data, (number_of_words * 2));
 }
 
+FinsErrors FINS_TCP::MemoryAreaWrite(MemoryArea area, uint16_t start_address, String text_message)
+{
+    uint8_t mess_len = text_message.length();
+    if (mess_len % 2)
+        mess_len++;
+
+    uint16_t en_hex[mess_len / 2];
+
+    for (size_t i = 0; i < (mess_len / 2); i++)
+    {
+        en_hex[i] = (0xFF & (text_message[i * 2])) << 8;
+        en_hex[i] = en_hex[i] | (0xFF & text_message[(i * 2) + 1]);
+    }
+
+
+    return MemoryAreaWrite(area, start_address, mess_len / 2, en_hex);
+}
+
 uint8_t FINS_TCP::readBit(MemoryArea area, uint16_t address, uint8_t bit_position)
 {
     uint16_t word_ = readWord(area, address);
@@ -456,7 +474,6 @@ FinsErrors FINS_TCP::FrameSend(const uint8_t data[], int words)
 
 bool FINS_TCP::NodeAddressDataSend()
 {
-
     if (!cliente.connected())
     {
         Serial.println("No hay un cliente conectado NADS");
